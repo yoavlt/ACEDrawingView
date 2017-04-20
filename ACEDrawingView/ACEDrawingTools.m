@@ -343,8 +343,6 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 #pragma mark - ACEDrawingRectangleTool
 
 @interface ACEDrawingRectangleTool ()
-@property (nonatomic, assign) CGPoint firstPoint;
-@property (nonatomic, assign) CGPoint lastPoint;
 @end
 
 #pragma mark -

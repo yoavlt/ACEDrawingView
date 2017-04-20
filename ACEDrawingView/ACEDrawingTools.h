@@ -110,6 +110,8 @@
 @interface ACEDrawingRectangleTool : NSObject<ACEDrawingTool>
 
 @property (nonatomic, assign) BOOL fill;
+@property (nonatomic, assign) CGPoint firstPoint;
+@property (nonatomic, assign) CGPoint lastPoint;
 
 @end
 
