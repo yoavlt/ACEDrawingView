@@ -77,6 +77,11 @@
     return self;
 }
 
+- (NSArray*)pathTools
+{
+    return self.pathArray;
+}
+
 - (void)configure
 {
     // init the private arrays
