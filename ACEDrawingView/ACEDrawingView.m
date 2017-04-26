@@ -138,6 +138,12 @@
 #endif
 }
 
+- (void)forceDraw:(BOOL)redraw
+{
+    [self updateCacheImage:redraw];
+    [self setNeedsDisplay];
+}
+
 - (void)commitAndDiscardToolStack
 {
     [self updateCacheImage:YES];

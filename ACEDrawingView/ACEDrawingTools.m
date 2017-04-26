@@ -159,6 +159,36 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
     self.lastPoint = endPoint;
 }
 
+- (BOOL)isNear:(CGPoint)point
+{
+    CGPoint near = [self nearPoint:point];
+    if (CGPointEqualToPoint(near, CGPointZero)) {
+        return NO;
+    }
+    return YES;
+}
+
+- (CGPoint)nearPoint:(CGPoint)point
+{
+    CGPoint p1 = CGPointMake(self.firstPoint.x, self.lastPoint.y);
+    CGPoint p2 = self.firstPoint;
+    CGPoint p3 = CGPointMake(self.lastPoint.x, self.firstPoint.y);
+    CGPoint p4 = self.lastPoint;
+    CGPoint points[] = {p1, p2, p3, p4};
+    for (int i = 0; i < 4; ++i) {
+        if ([self nearPoint:points[i] to:point]) {
+            return points[i];
+        }
+    }
+    return CGPointZero;
+}
+
+- (BOOL)nearPoint:(CGPoint)from to:(CGPoint)to
+{
+    CGFloat minDistance = 24.0 * 24.0;
+    return pow(from.x - to.x, 2) + pow(from.y - to.y, 2) < minDistance;
+}
+
 - (void)draw
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
