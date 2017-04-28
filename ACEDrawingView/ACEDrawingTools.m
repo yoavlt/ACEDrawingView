@@ -467,6 +467,8 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 @synthesize lineColor = _lineColor;
 @synthesize lineAlpha = _lineAlpha;
 @synthesize lineWidth = _lineWidth;
+@synthesize isGrabbing = _isGrabbing;
+@synthesize grabbingPoint = _grabbingPoint;
 
 - (void)setInitialPoint:(CGPoint)firstPoint
 {
