@@ -190,6 +190,9 @@
         // set the draw point
         [self.image drawAtPoint:CGPointZero];
         [self.currentTool draw];
+        if ([self lastTool].isGrabbing) {
+            [[self lastTool] draw];
+        }
     }
     
     // store the image
