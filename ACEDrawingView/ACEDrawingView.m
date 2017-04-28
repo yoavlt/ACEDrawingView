@@ -291,6 +291,17 @@
     }
 }
 
+- (void)putTool:(CGPoint)firstPoint lastPoint:(CGPoint)lastPoint
+{
+    self.currentTool = [self toolWithCurrentSettings];
+    self.currentTool.lineWidth = self.lineWidth;
+    self.currentTool.lineColor = self.lineColor;
+    self.currentTool.lineAlpha = self.lineAlpha;
+    [self.pathArray addObject:self.currentTool];
+    [self.undoStates addObject:[self.currentTool captureToolState]];
+    [self.currentTool setInitialPoint:currentPoint];
+    [self finishDrawing];
+}
 
 #pragma mark - Touch Methods
 

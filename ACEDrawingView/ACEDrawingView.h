@@ -79,6 +79,8 @@ typedef NS_ENUM(NSUInteger, ACEDrawingMode) {
 // erase all
 - (void)clear;
 
+- (void)putTool:(CGPoint)firstPoint lastPoint:(CGPoint)lastPoint;
+
 // cleanup in preparation for taking a snapshot
 - (void)prepareForSnapshot;
 
