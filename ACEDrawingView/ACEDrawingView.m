@@ -702,4 +702,13 @@
     return nil;
 }
 
+- (BOOL)isGrabbing
+{
+    id<ACEDrawingTool> lastTool = [self lastTool];
+    if ([lastTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+        return lastTool.isGrabbing;
+    }
+    return NO;
+}
+
 @end

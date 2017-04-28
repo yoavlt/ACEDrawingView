@@ -70,6 +70,7 @@ typedef NS_ENUM(NSUInteger, ACEDrawingMode) {
 @property (nonatomic, strong) UIImage *backgroundImage;
 @property (nonatomic, readonly) NSUInteger undoSteps;
 @property (nonatomic, readonly) NSArray* pathTools;
+@property (nonatomic, readonly) BOOL isGrabbing;
 
 
 // load external image
