@@ -82,6 +82,14 @@
     return self.pathArray;
 }
 
+- (id<ACEDrawingTool>)lastTool
+{
+    if (self.pathArray.count > 0) {
+        return self.pathArray[self.pathArray.count -1];
+    }
+    return nil;
+}
+
 - (void)configure
 {
     // init the private arrays
@@ -292,8 +300,8 @@
     previousPoint1 = [touch previousLocationInView:self];
     currentPoint = [touch locationInView:self];
     
-    if ([self.currentTool isNear:currentPoint] && [self.currentTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
-        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)self.currentTool;
+    if ([self lastTool] != nil && [[self lastTool] isNear:currentPoint] && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
+        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
         CGPoint nearPoint = [tool nearPoint:currentPoint];
         tool.grabbingPoint = nearPoint;
         tool.isGrabbing = YES;
@@ -337,8 +345,8 @@
     previousPoint1 = [touch previousLocationInView:self];
     currentPoint = [touch locationInView:self];
     
-    if (self.currentTool.isGrabbing && [self.currentTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
-        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)self.currentTool;
+    if ([self lastTool] != nil && [self lastTool].isGrabbing && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
+        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
         [tool updateGrabbingPoint:currentPoint];
         tool.grabbingPoint = currentPoint;
         return;
@@ -374,11 +382,11 @@
     // make sure a point is recorded
     [self touchesMoved:touches withEvent:event];
     
+    if ([self lastTool] != nil && [self lastTool].isGrabbing) {
+        [self lastTool].isGrabbing = NO;
+        return;
+    }
     if ([self.currentTool isKindOfClass:[ACEDrawingDraggableTextTool class]]) {
-        if (self.currentTool.isGrabbing) {
-            self.currentTool.isGrabbing = NO;
-            return;
-        }
         if (self.draggableTextView.isEditing) {
             [self.draggableTextView hideEditingHandles];
         } else {
