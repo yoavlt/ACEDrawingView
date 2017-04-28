@@ -382,7 +382,7 @@
     // make sure a point is recorded
     [self touchesMoved:touches withEvent:event];
     
-    if ([self lastTool] != nil && [self lastTool].isGrabbing) {
+    if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]] && [self lastTool].isGrabbing) {
         [self lastTool].isGrabbing = NO;
         return;
     }
