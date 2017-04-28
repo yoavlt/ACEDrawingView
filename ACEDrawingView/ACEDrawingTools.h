@@ -49,12 +49,13 @@
 @property (nonatomic, assign) CGFloat lineAlpha;
 @property (nonatomic, assign) CGFloat lineWidth;
 @property (nonatomic, assign) BOOL isGrabbing;
-@property (nonatomic, assign) NSUInteger index;
+@property (nonatomic, assign) CGPoint grabbingPoint;
 
 - (void)setInitialPoint:(CGPoint)firstPoint;
 - (void)moveFromPoint:(CGPoint)startPoint toPoint:(CGPoint)endPoint;
 - (BOOL)isNear:(CGPoint)point;
 - (CGPoint)nearPoint:(CGPoint)point;
+- (CGPoint)updateGrabbingPoint:(CGPoint)point;
 - (void)draw;
 
 - (ACEDrawingToolState *)captureToolState;

@@ -292,6 +292,14 @@
     previousPoint1 = [touch previousLocationInView:self];
     currentPoint = [touch locationInView:self];
     
+    if ([self.currentTool isNear:currentPoint] && [self.currentTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)self.currentTool;
+        CGPoint nearPoint = [tool nearPoint:currentPoint];
+        tool.grabbingPoint = nearPoint;
+        tool.isGrabbing = YES;
+        return;
+    }
+    
     // init the bezier path
     self.currentTool = [self toolWithCurrentSettings];
     self.currentTool.lineWidth = self.lineWidth;
@@ -329,6 +337,13 @@
     previousPoint1 = [touch previousLocationInView:self];
     currentPoint = [touch locationInView:self];
     
+    if (self.currentTool.isGrabbing && [self.currentTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)self.currentTool;
+        [tool updateGrabbingPoint:currentPoint];
+        tool.grabbingPoint = currentPoint;
+        return;
+    }
+
     if (self.edgeSnapThreshold > 0 && [self.currentTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
         [self snapCurrentPointToEdges];
     }
@@ -360,6 +375,10 @@
     [self touchesMoved:touches withEvent:event];
     
     if ([self.currentTool isKindOfClass:[ACEDrawingDraggableTextTool class]]) {
+        if (self.currentTool.isGrabbing) {
+            self.currentTool.isGrabbing = NO;
+            return;
+        }
         if (self.draggableTextView.isEditing) {
             [self.draggableTextView hideEditingHandles];
         } else {
