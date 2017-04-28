@@ -181,7 +181,9 @@
         
         // I need to redraw all the lines
         for (id<ACEDrawingTool> tool in self.pathArray) {
-            [tool draw];
+            if (tool.isGrabbing == NO) {
+                [tool draw];
+            }
         }
         
     } else {
@@ -305,6 +307,8 @@
         CGPoint nearPoint = [tool nearPoint:currentPoint];
         tool.grabbingPoint = nearPoint;
         tool.isGrabbing = YES;
+        [self updateCacheImage:YES];
+        [self setNeedsDisplay];
         return;
     }
     
@@ -349,6 +353,7 @@
         ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
         [tool updateGrabbingPoint:currentPoint];
         tool.grabbingPoint = currentPoint;
+        [self setNeedsDisplay];
         return;
     }
 
@@ -384,6 +389,8 @@
     
     if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]] && [self lastTool].isGrabbing) {
         [self lastTool].isGrabbing = NO;
+        [self updateCacheImage:YES];
+        [self setNeedsDisplay];
         return;
     }
     if ([self.currentTool isKindOfClass:[ACEDrawingDraggableTextTool class]]) {

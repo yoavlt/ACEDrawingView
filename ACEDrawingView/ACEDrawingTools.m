@@ -428,7 +428,7 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
     CGPoint p3 = CGPointMake(self.lastPoint.x, self.firstPoint.y);
     if (CGPointEqualToPoint(p3, self.grabbingPoint)) {
         self.firstPoint = CGPointMake(self.firstPoint.x, point.y);
-        self.lastPoint  = CGPointMake(point.x, self.firstPoint.y);
+        self.lastPoint  = CGPointMake(point.x, self.lastPoint.y);
     }
     CGPoint p4 = self.lastPoint;
     if (CGPointEqualToPoint(p4, self.grabbingPoint)) {
