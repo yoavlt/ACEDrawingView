@@ -159,60 +159,6 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
     self.lastPoint = endPoint;
 }
 
-- (BOOL)isNear:(CGPoint)point
-{
-    CGPoint near = [self nearPoint:point];
-    if (CGPointEqualToPoint(near, CGPointZero)) {
-        return NO;
-    }
-    return YES;
-}
-
-- (CGPoint)nearPoint:(CGPoint)point
-{
-    CGPoint p1 = CGPointMake(self.firstPoint.x, self.lastPoint.y);
-    CGPoint p2 = self.firstPoint;
-    CGPoint p3 = CGPointMake(self.lastPoint.x, self.firstPoint.y);
-    CGPoint p4 = self.lastPoint;
-    CGPoint points[] = {p1, p2, p3, p4};
-    for (int i = 0; i < 4; ++i) {
-        if ([self nearPoint:points[i] to:point]) {
-            return points[i];
-        }
-    }
-    return CGPointZero;
-}
-
-- (CGPoint)updateGrabbingPoint:(CGPoint)point
-{
-    CGPoint p1 = CGPointMake(self.firstPoint.x, self.lastPoint.y);
-    if (CGPointEqualToPoint(p1, self.grabbingPoint)) {
-        self.firstPoint = CGPointMake(point.x, self.firstPoint.y);
-        self.lastPoint  = CGPointMake(self.lastPoint.x, point.y);
-    }
-    CGPoint p2 = self.firstPoint;
-    if (CGPointEqualToPoint(p2, self.grabbingPoint)) {
-        self.firstPoint = point;
-    }
-    CGPoint p3 = CGPointMake(self.lastPoint.x, self.firstPoint.y);
-    if (CGPointEqualToPoint(p3, self.grabbingPoint)) {
-        self.firstPoint = CGPointMake(self.firstPoint.x, point.y);
-        self.lastPoint  = CGPointMake(point.x, self.firstPoint.y);
-    }
-    CGPoint p4 = self.lastPoint;
-    if (CGPointEqualToPoint(p4, self.grabbingPoint)) {
-        self.lastPoint = point;
-    }
-    self.grabbingPoint = point;
-    return point;
-}
-
-- (BOOL)nearPoint:(CGPoint)from to:(CGPoint)to
-{
-    CGFloat minDistance = 24.0 * 24.0;
-    return pow(from.x - to.x, 2) + pow(from.y - to.y, 2) < minDistance;
-}
-
 - (void)draw
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
@@ -406,6 +352,8 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 @synthesize lineColor = _lineColor;
 @synthesize lineAlpha = _lineAlpha;
 @synthesize lineWidth = _lineWidth;
+@synthesize isGrabbing = _isGrabbing;
+@synthesize grabbingPoint = _grabbingPoint;
 
 - (void)setInitialPoint:(CGPoint)firstPoint
 {
@@ -441,6 +389,61 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 {
     return [ACEDrawingToolState stateForTool:self];
 }
+
+- (BOOL)isNear:(CGPoint)point
+{
+    CGPoint near = [self nearPoint:point];
+    if (CGPointEqualToPoint(near, CGPointZero)) {
+        return NO;
+    }
+    return YES;
+}
+
+- (CGPoint)nearPoint:(CGPoint)point
+{
+    CGPoint p1 = CGPointMake(self.firstPoint.x, self.lastPoint.y);
+    CGPoint p2 = self.firstPoint;
+    CGPoint p3 = CGPointMake(self.lastPoint.x, self.firstPoint.y);
+    CGPoint p4 = self.lastPoint;
+    CGPoint points[] = {p1, p2, p3, p4};
+    for (int i = 0; i < 4; ++i) {
+        if ([self nearPoint:points[i] to:point]) {
+            return points[i];
+        }
+    }
+    return CGPointZero;
+}
+
+- (CGPoint)updateGrabbingPoint:(CGPoint)point
+{
+    CGPoint p1 = CGPointMake(self.firstPoint.x, self.lastPoint.y);
+    if (CGPointEqualToPoint(p1, self.grabbingPoint)) {
+        self.firstPoint = CGPointMake(point.x, self.firstPoint.y);
+        self.lastPoint  = CGPointMake(self.lastPoint.x, point.y);
+    }
+    CGPoint p2 = self.firstPoint;
+    if (CGPointEqualToPoint(p2, self.grabbingPoint)) {
+        self.firstPoint = point;
+    }
+    CGPoint p3 = CGPointMake(self.lastPoint.x, self.firstPoint.y);
+    if (CGPointEqualToPoint(p3, self.grabbingPoint)) {
+        self.firstPoint = CGPointMake(self.firstPoint.x, point.y);
+        self.lastPoint  = CGPointMake(point.x, self.firstPoint.y);
+    }
+    CGPoint p4 = self.lastPoint;
+    if (CGPointEqualToPoint(p4, self.grabbingPoint)) {
+        self.lastPoint = point;
+    }
+    self.grabbingPoint = point;
+    return point;
+}
+
+- (BOOL)nearPoint:(CGPoint)from to:(CGPoint)to
+{
+    CGFloat minDistance = 24.0 * 24.0;
+    return pow(from.x - to.x, 2) + pow(from.y - to.y, 2) < minDistance;
+}
+
 
 - (void)dealloc
 {
