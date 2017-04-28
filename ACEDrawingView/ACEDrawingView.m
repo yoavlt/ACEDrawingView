@@ -108,6 +108,8 @@
     // set the transparent background
     self.backgroundColor = [UIColor clearColor];
     
+    self.multipleTouchEnabled = NO;
+    
     // set the deafault draggable text icons
     NSURL *bundleURL = [[NSBundle bundleForClass:self.classForCoder] URLForResource:@"ACEDraggableText" withExtension:@"bundle"];
     if (bundleURL != nil) {
