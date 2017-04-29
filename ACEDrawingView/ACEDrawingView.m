@@ -146,9 +146,14 @@
             break;
     }
     [self.currentTool draw];
-    if ([self lastTool].isGrabbing) {
-        [[self lastTool] draw];
+    id<ACEDrawingTool> tool = [self lastTool];
+    if ([tool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+        ACEDrawingRectangleTool* rectangleTool = (ACEDrawingRectangleTool*)tool;
+        if (rectangleTool.isGrabbing || rectangleTool.isTranslating) {
+            [rectangleTool draw];
+        }
     }
+    
 #endif
 }
 
@@ -187,8 +192,11 @@
         
         // I need to redraw all the lines
         for (id<ACEDrawingTool> tool in self.pathArray) {
-            if (tool.isGrabbing == NO) {
-                [tool draw];
+            if ([tool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+                ACEDrawingRectangleTool* rectangleTool = (ACEDrawingRectangleTool*)tool;
+                if (rectangleTool.isTranslating == NO && rectangleTool.isGrabbing == NO) {
+                    [rectangleTool draw];
+                }
             }
         }
         
@@ -394,14 +402,14 @@
         return;
     }
     
-    if (self.touchDrawable == NO) {
-        return;
-    }
-
     if (self.edgeSnapThreshold > 0 && [self.currentTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
         [self snapCurrentPointToEdges];
     }
     
+    if (self.touchDrawable == NO) {
+        return;
+    }
+
     if ([self.currentTool isKindOfClass:[ACEDrawingPenTool class]]) {
         CGRect bounds = [(ACEDrawingPenTool*)self.currentTool addPathPreviousPreviousPoint:previousPoint2 withPreviousPoint:previousPoint1 withCurrentPoint:currentPoint];
         
