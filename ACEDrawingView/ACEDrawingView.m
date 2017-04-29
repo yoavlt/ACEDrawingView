@@ -316,6 +316,9 @@
     }
     [self.pathArray addObject:self.currentTool];
     [self.undoStates addObject:[self.currentTool captureToolState]];
+    if ([self.delegate respondsToSelector:@selector(drawingView:didChangeUndoState:)]) {
+        [self.delegate drawingView:self didChangeUndoState:self.undoStates];
+    }
     [self finishDrawing];
     [self setNeedsDisplay];
 }
@@ -370,7 +373,9 @@
     } else {
         [self.pathArray addObject:self.currentTool];
         [self.undoStates addObject:[self.currentTool captureToolState]];
-        
+        if ([self.delegate respondsToSelector:@selector(drawingView:didChangeUndoState:)]) {
+            [self.delegate drawingView:self didChangeUndoState:self.undoStates];
+        }
         [self.currentTool setInitialPoint:currentPoint];
     }
     
@@ -507,6 +512,9 @@
     // when loading an external image, I'm cleaning all the paths and the undo buffer
     [self.redoStates removeAllObjects];
     [self.undoStates removeAllObjects];
+    if ([self.delegate respondsToSelector:@selector(drawingView:didChangeUndoState:)]) {
+        [self.delegate drawingView:self didChangeUndoState:self.undoStates];
+    }
     [self.pathArray removeAllObjects];
     [self updateCacheImage:YES];
     [self setNeedsDisplay];
@@ -545,6 +553,9 @@
     
     [self.redoStates removeAllObjects];
     [self.undoStates removeAllObjects];
+    if ([self.delegate respondsToSelector:@selector(drawingView:didChangeUndoState:)]) {
+        [self.delegate drawingView:self didChangeUndoState:self.undoStates];
+    }
     [self.pathArray removeAllObjects];
     self.backgroundImage = nil;
     [self updateCacheImage:YES];
@@ -595,10 +606,16 @@
             }];
             
             [self.undoStates removeLastObject];
+            if ([self.delegate respondsToSelector:@selector(drawingView:didChangeUndoState:)]) {
+                [self.delegate drawingView:self didChangeUndoState:self.undoStates];
+            }
             
         // undo for a tools sub states
         } else {
             [self.undoStates removeLastObject];
+            if ([self.delegate respondsToSelector:@selector(drawingView:didChangeUndoState:)]) {
+                [self.delegate drawingView:self didChangeUndoState:self.undoStates];
+            }
             if ([undoState.tool respondsToSelector:@selector(applyToolState:)]) {
                 [undoState.tool applyToolState:undoState];
             }
@@ -636,6 +653,9 @@
         
         // update undo states
         [self.undoStates addObject:[self.redoStates lastObject]];
+        if ([self.delegate respondsToSelector:@selector(drawingView:didChangeUndoState:)]) {
+            [self.delegate drawingView:self didChangeUndoState:self.undoStates];
+        }
         [self.redoStates removeLastObject];
         
         // redraw
@@ -695,7 +715,12 @@
 {
     ACEDrawingDraggableTextTool *tool = [self draggableTextToolForLabel:label];
     
-    if (tool) { [self.undoStates addObject:[tool captureToolState]]; }
+    if (tool) {
+        [self.undoStates addObject:[tool captureToolState]];
+        if ([self.delegate respondsToSelector:@selector(drawingView:didChangeUndoState:)]) {
+            [self.delegate drawingView:self didChangeUndoState:self.undoStates];
+        }
+    }
 }
 
 - (void)labelViewWillShowEditingHandles:(ACEDrawingLabelView *)label
@@ -727,6 +752,9 @@
     
     if (numberOfStates == 0 && tool) {
         [self.undoStates addObject:[tool captureToolState]];
+        if ([self.delegate respondsToSelector:@selector(drawingView:didChangeUndoState:)]) {
+            [self.delegate drawingView:self didChangeUndoState:self.undoStates];
+        }
         
         // call the delegate
         if ([self.delegate respondsToSelector:@selector(drawingView:didEndDrawUsingTool:)]) {
