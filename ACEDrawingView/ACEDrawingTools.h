@@ -117,6 +117,12 @@
 @property (nonatomic, assign) CGPoint firstPoint;
 @property (nonatomic, assign) CGPoint lastPoint;
 
+@property (nonatomic, assign) BOOL isTranslating;
+@property (nonatomic, assign) CGPoint translatingPoint;
+
+- (BOOL)isHit:(CGPoint)point;
+- (void)translatePoint:(CGPoint)targetPoint;
+
 @end
 
 #pragma mark -

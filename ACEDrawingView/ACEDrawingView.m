@@ -325,15 +325,21 @@
     previousPoint1 = [touch previousLocationInView:self];
     currentPoint = [touch locationInView:self];
     
-    if ([self lastTool] != nil && [[self lastTool] isNear:currentPoint] && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
+    if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
         ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
-        CGPoint nearPoint = [tool nearPoint:currentPoint];
-        tool.grabbingPoint = nearPoint;
-        tool.isGrabbing = YES;
-        [self updateCacheImage:YES];
-        [self setNeedsDisplay];
+        if ([[self lastTool] isNear:currentPoint]) {
+            CGPoint nearPoint = [tool nearPoint:currentPoint];
+            tool.grabbingPoint = nearPoint;
+            tool.isGrabbing = YES;
+            [self updateCacheImage:YES];
+            [self setNeedsDisplay];
+        } else if ([tool isHit:currentPoint]) {
+            tool.isTranslating = YES;
+            tool.translatingPoint = currentPoint;
+        }
         return;
     }
+    
     
     if (self.touchDrawable == NO) {
         return;
@@ -376,11 +382,17 @@
     previousPoint1 = [touch previousLocationInView:self];
     currentPoint = [touch locationInView:self];
     
-    if ([self lastTool] != nil && [self lastTool].isGrabbing && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
+    if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
         ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
-        [tool updateGrabbingPoint:currentPoint];
-        tool.grabbingPoint = currentPoint;
-        [self setNeedsDisplay];
+        if ([self lastTool].isGrabbing) {
+            [tool updateGrabbingPoint:currentPoint];
+            tool.grabbingPoint = currentPoint;
+            [self setNeedsDisplay];
+        } else if (tool.isTranslating) {
+            [tool translatePoint:currentPoint];
+            tool.translatingPoint = currentPoint;
+            [self setNeedsDisplay];
+        }
         return;
     }
     
@@ -418,8 +430,13 @@
     // make sure a point is recorded
     [self touchesMoved:touches withEvent:event];
     
-    if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]] && [self lastTool].isGrabbing) {
-        [self lastTool].isGrabbing = NO;
+    if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
+        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
+        if (tool.isGrabbing) {
+            tool.isGrabbing = NO;
+        } else if (tool.isTranslating) {
+            tool.isTranslating = NO;
+        }
         [self updateCacheImage:YES];
         [self setNeedsDisplay];
         return;

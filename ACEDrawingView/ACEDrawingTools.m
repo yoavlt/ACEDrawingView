@@ -355,6 +355,15 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 @synthesize isGrabbing = _isGrabbing;
 @synthesize grabbingPoint = _grabbingPoint;
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        self.isTranslating = NO;
+    }
+    return self;
+}
+
 - (void)setInitialPoint:(CGPoint)firstPoint
 {
     self.firstPoint = firstPoint;
@@ -440,10 +449,32 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 
 - (BOOL)nearPoint:(CGPoint)from to:(CGPoint)to
 {
-    CGFloat minDistance = 24.0 * 24.0;
+    CGFloat minDistance = 48.0 * 48.0;
     return pow(from.x - to.x, 2) + pow(from.y - to.y, 2) < minDistance;
 }
 
+- (BOOL)isHit:(CGPoint)point
+{
+    CGPoint topLeft     = self.firstPoint.x < self.lastPoint.x ? self.firstPoint : self.lastPoint;
+    CGPoint bottomRight = self.firstPoint.x < self.lastPoint.x ? self.lastPoint : self.firstPoint;
+
+    if (topLeft.x < point.x && point.x < bottomRight.x) {
+        if (topLeft.y < point.y && point.y < bottomRight.y) {
+            return YES;
+        }
+    }
+
+    return NO;
+}
+
+- (void)translatePoint:(CGPoint)targetPoint
+{
+    CGFloat dx = targetPoint.x - self.translatingPoint.y;
+    CGFloat dy = targetPoint.y - self.translatingPoint.y;
+    
+    self.firstPoint = CGPointMake(self.firstPoint.x + dx, self.firstPoint.y + dy);
+    self.lastPoint  = CGPointMake(self.lastPoint.x + dx, self.lastPoint.y + dy);
+}
 
 - (void)dealloc
 {
