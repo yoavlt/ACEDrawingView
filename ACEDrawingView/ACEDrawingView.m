@@ -329,6 +329,10 @@
         return;
     }
     
+    if (self.touchDrawable == NO) {
+        return;
+    }
+    
     // init the bezier path
     self.currentTool = [self toolWithCurrentSettings];
     self.currentTool.lineWidth = self.lineWidth;
@@ -373,6 +377,10 @@
         [self setNeedsDisplay];
         return;
     }
+    
+    if (self.touchDrawable == NO) {
+        return;
+    }
 
     if (self.edgeSnapThreshold > 0 && [self.currentTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
         [self snapCurrentPointToEdges];
@@ -410,6 +418,11 @@
         [self setNeedsDisplay];
         return;
     }
+    
+    if (self.touchDrawable == NO) {
+        return;
+    }
+    
     if ([self.currentTool isKindOfClass:[ACEDrawingDraggableTextTool class]]) {
         if (self.draggableTextView.isEditing) {
             [self.draggableTextView hideEditingHandles];
