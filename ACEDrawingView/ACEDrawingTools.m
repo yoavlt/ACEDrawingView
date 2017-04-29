@@ -469,7 +469,7 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 
 - (void)translatePoint:(CGPoint)targetPoint
 {
-    CGFloat dx = targetPoint.x - self.translatingPoint.y;
+    CGFloat dx = targetPoint.x - self.translatingPoint.x;
     CGFloat dy = targetPoint.y - self.translatingPoint.y;
     
     self.firstPoint = CGPointMake(self.firstPoint.x + dx, self.firstPoint.y + dy);

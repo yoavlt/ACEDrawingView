@@ -327,19 +327,18 @@
     
     if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
         ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
-        if ([[self lastTool] isNear:currentPoint]) {
+        if ([tool isNear:currentPoint]) {
             CGPoint nearPoint = [tool nearPoint:currentPoint];
             tool.grabbingPoint = nearPoint;
             tool.isGrabbing = YES;
-            [self updateCacheImage:YES];
-            [self setNeedsDisplay];
         } else if ([tool isHit:currentPoint]) {
             tool.isTranslating = YES;
             tool.translatingPoint = currentPoint;
         }
+        [self updateCacheImage:YES];
+        [self setNeedsDisplay];
         return;
     }
-    
     
     if (self.touchDrawable == NO) {
         return;
@@ -384,15 +383,14 @@
     
     if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
         ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
-        if ([self lastTool].isGrabbing) {
+        if (tool.isGrabbing) {
             [tool updateGrabbingPoint:currentPoint];
             tool.grabbingPoint = currentPoint;
-            [self setNeedsDisplay];
         } else if (tool.isTranslating) {
             [tool translatePoint:currentPoint];
             tool.translatingPoint = currentPoint;
-            [self setNeedsDisplay];
         }
+        [self setNeedsDisplay];
         return;
     }
     
