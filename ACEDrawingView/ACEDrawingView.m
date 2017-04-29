@@ -109,6 +109,7 @@
     self.backgroundColor = [UIColor clearColor];
     
     self.multipleTouchEnabled = NO;
+    self.touchDrawable = YES;
     
     // set the deafault draggable text icons
     NSURL *bundleURL = [[NSBundle bundleForClass:self.classForCoder] URLForResource:@"ACEDraggableText" withExtension:@"bundle"];
@@ -301,8 +302,8 @@
     self.currentTool.lineAlpha = self.lineAlpha;
     [self.pathArray addObject:self.currentTool];
     [self.undoStates addObject:[self.currentTool captureToolState]];
-    [self.currentTool setInitialPoint:currentPoint];
     [self finishDrawing];
+    [self setNeedsDisplay];
 }
 
 #pragma mark - Touch Methods
