@@ -71,6 +71,7 @@ typedef NS_ENUM(NSUInteger, ACEDrawingMode) {
 @property (nonatomic, readonly) NSUInteger undoSteps;
 @property (nonatomic, readonly) NSArray* pathTools;
 @property (nonatomic, readonly) BOOL isGrabbing;
+@property (nonatomic, readonly) BOOL isTranslating;
 @property (nonatomic, assign) BOOL touchDrawable;
 
 

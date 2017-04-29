@@ -756,4 +756,13 @@
     return NO;
 }
 
+- (BOOL)isTranslating
+{
+    id<ACEDrawingTool> lastTool = [self lastTool];
+    if ([lastTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+        return [(ACEDrawingRectangleTool*)lastTool isTranslating];
+    }
+    return NO;
+}
+
 @end
