@@ -381,6 +381,10 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
     // set the properties
     CGContextSetAlpha(context, self.lineAlpha);
     
+    if (self.isTranslating) {
+        CGContextSetShadow(context, CGSizeMake(2.5, 2.5), 10.0);
+    }
+    
     // draw the rectangle
     CGRect rectToFill = CGRectMake(self.firstPoint.x, self.firstPoint.y, self.lastPoint.x - self.firstPoint.x, self.lastPoint.y - self.firstPoint.y);
     if (self.fill) {
