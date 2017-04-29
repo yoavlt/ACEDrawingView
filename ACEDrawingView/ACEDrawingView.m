@@ -300,6 +300,12 @@
     self.currentTool.lineWidth = self.lineWidth;
     self.currentTool.lineColor = self.lineColor;
     self.currentTool.lineAlpha = self.lineAlpha;
+    
+    if ([self.currentTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)self.currentTool;
+        tool.firstPoint = firstPoint;
+        tool.lastPoint = lastPoint;
+    }
     [self.pathArray addObject:self.currentTool];
     [self.undoStates addObject:[self.currentTool captureToolState]];
     [self finishDrawing];
