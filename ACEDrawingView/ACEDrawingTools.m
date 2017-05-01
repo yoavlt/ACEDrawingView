@@ -360,6 +360,8 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
     self = [super init];
     if (self) {
         self.isTranslating = NO;
+        self.isGrabbing = NO;
+        self.isActive = NO;
     }
     return self;
 }
@@ -388,7 +390,13 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
     // draw the rectangle
     CGRect rectToFill = CGRectMake(self.firstPoint.x, self.firstPoint.y, self.lastPoint.x - self.firstPoint.x, self.lastPoint.y - self.firstPoint.y);
     if (self.fill) {
-        CGContextSetFillColorWithColor(context, self.lineColor.CGColor);
+        UIColor* color;
+        if (self.isActive) {
+            color = [self.lineColor colorWithAlphaComponent:0.5];
+        } else {
+            color = self.lineColor;
+        }
+        CGContextSetFillColorWithColor(context, color.CGColor);
         CGContextFillRect(UIGraphicsGetCurrentContext(), rectToFill);
         
     } else {

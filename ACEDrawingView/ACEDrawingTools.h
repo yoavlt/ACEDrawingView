@@ -119,6 +119,7 @@
 
 @property (nonatomic, assign) BOOL isTranslating;
 @property (nonatomic, assign) CGPoint translatingPoint;
+@property (nonatomic, assign) BOOL isActive;
 
 - (BOOL)isHit:(CGPoint)point;
 - (void)translatePoint:(CGPoint)targetPoint;
