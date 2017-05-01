@@ -313,6 +313,7 @@
         ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)self.currentTool;
         tool.firstPoint = firstPoint;
         tool.lastPoint = lastPoint;
+        tool.isActive = YES;
     }
     [self.pathArray addObject:self.currentTool];
     [self.undoStates addObject:[self.currentTool captureToolState]];
