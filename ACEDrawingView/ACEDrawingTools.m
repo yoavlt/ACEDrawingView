@@ -461,23 +461,28 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 
 - (BOOL)nearPoint:(CGPoint)from to:(CGPoint)to
 {
-    CGFloat width  = fabs(from.x - to.x);
-    CGFloat height = fabs(from.y - to.y);
-    CGFloat minDistance = pow(width * 0.25 * height * 0.25, 2);
+    CGFloat width  = fabs(_firstPoint.x - _lastPoint.x);
+    CGFloat height = fabs(_firstPoint.y - _lastPoint.y);
+    CGFloat minDistance = pow(width * 0.25, 2) + pow(height * 0.25, 2);
     return pow(from.x - to.x, 2) + pow(from.y - to.y, 2) < minDistance;
 }
 
 - (BOOL)isHit:(CGPoint)point
 {
-    CGPoint topLeft     = self.firstPoint.x < self.lastPoint.x ? self.firstPoint : self.lastPoint;
-    CGPoint bottomRight = self.firstPoint.x < self.lastPoint.x ? self.lastPoint : self.firstPoint;
-
+    CGFloat leftX   = self.firstPoint.x < self.lastPoint.x ? self.firstPoint.x : self.lastPoint.x;
+    CGFloat rightX  = self.firstPoint.x < self.lastPoint.x ? self.lastPoint.x : self.firstPoint.x;
+    CGFloat topY    = self.firstPoint.y < self.lastPoint.y ? self.firstPoint.y : self.lastPoint.y;
+    CGFloat bottomY = self.firstPoint.y < self.lastPoint.y ? self.lastPoint.y : self.firstPoint.y;
+    
+    CGPoint topLeft     = CGPointMake(leftX, topY);
+    CGPoint bottomRight = CGPointMake(rightX, bottomY);
+    
     if (topLeft.x < point.x && point.x < bottomRight.x) {
         if (topLeft.y < point.y && point.y < bottomRight.y) {
             return YES;
         }
     }
-
+    
     return NO;
 }
 
