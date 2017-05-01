@@ -461,7 +461,9 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 
 - (BOOL)nearPoint:(CGPoint)from to:(CGPoint)to
 {
-    CGFloat minDistance = 32.0 * 32.0;
+    CGFloat width  = fabs(from.x - to.x);
+    CGFloat height = fabs(from.y - to.y);
+    CGFloat minDistance = pow(width * 0.25 * height * 0.25, 2);
     return pow(from.x - to.x, 2) + pow(from.y - to.y, 2) < minDistance;
 }
 

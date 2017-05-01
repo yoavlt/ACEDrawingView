@@ -339,6 +339,9 @@
     
     if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
         ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
+        if (tool.isActive == NO) {
+            return;
+        }
         if ([tool isNear:currentPoint]) {
             CGPoint nearPoint = [tool nearPoint:currentPoint];
             tool.grabbingPoint = nearPoint;
