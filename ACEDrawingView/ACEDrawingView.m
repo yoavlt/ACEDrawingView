@@ -793,4 +793,15 @@
     return NO;
 }
 
+- (void)confirm
+{
+    id<ACEDrawingTool> lastTool = [self lastTool];
+    if ([lastTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+        ACEDrawingRectangleTool* rectangleTool = (ACEDrawingRectangleTool*)lastTool;
+        rectangleTool.isActive = NO;
+        [self updateCacheImage:YES];
+        [self setNeedsDisplay];
+    }
+}
+
 @end
