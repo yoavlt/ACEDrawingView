@@ -96,6 +96,8 @@ typedef NS_ENUM(NSUInteger, ACEDrawingMode) {
 - (void)forceDraw:(BOOL)redraw;
 - (void)confirm;
 
+- (void)deleteActiveTool;
+
 /**
  @discussion Discards the tool stack and renders them to prev_image, making the current state the 'start' state.
  (Can be called before resize to make content more predictable)
@@ -104,7 +106,7 @@ typedef NS_ENUM(NSUInteger, ACEDrawingMode) {
 
 @end
 
-#pragma mark - 
+#pragma mark -
 
 @interface ACEDrawingView (Deprecated)
 @property (nonatomic, strong) UIImage *prev_image DEPRECATED_MSG_ATTRIBUTE("Use 'backgroundImage' instead.");
@@ -123,3 +125,4 @@ typedef NS_ENUM(NSUInteger, ACEDrawingMode) {
 - (void)drawingView:(ACEDrawingView *)view didEndGrab:(id<ACEDrawingTool>)tool;
 - (void)drawingView:(ACEDrawingView *)view didChangeUndoState:(NSArray*)undoStates;
 @end
+

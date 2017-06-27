@@ -90,6 +90,17 @@
     return nil;
 }
 
+- (NSArray*)activeTools
+{
+    NSMutableArray* result = [NSMutableArray new];
+    for (ACEDrawingRectangleTool* tool in self.pathArray) {
+        if ([tool isKindOfClass:[ACEDrawingRectangleTool class]] && (tool.isGrabbing || tool.isActive || tool.isTranslating)) {
+            [result addObject:tool];
+        }
+    }
+    return result;
+}
+
 - (void)configure
 {
     // init the private arrays
@@ -102,7 +113,7 @@
     self.lineColor = kDefaultLineColor;
     self.lineWidth = kDefaultLineWidth;
     self.lineAlpha = kDefaultLineAlpha;
-
+    
     self.drawMode = ACEDrawingModeOriginalSize;
     
     // set the transparent background
@@ -145,12 +156,13 @@
             [self.image drawInRect:self.bounds];
             break;
     }
-    [self.currentTool draw];
-    id<ACEDrawingTool> tool = [self lastTool];
-    if ([tool isKindOfClass:[ACEDrawingRectangleTool class]]) {
-        ACEDrawingRectangleTool* rectangleTool = (ACEDrawingRectangleTool*)tool;
-        if (rectangleTool.isGrabbing || rectangleTool.isTranslating) {
-            [rectangleTool draw];
+    for (ACEDrawingRectangleTool* tool in [self activeTools]) {
+        [tool draw];
+        if ([tool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+            ACEDrawingRectangleTool* rectangleTool = (ACEDrawingRectangleTool*)tool;
+            if (rectangleTool.isGrabbing || rectangleTool.isTranslating) {
+                [rectangleTool draw];
+            }
         }
     }
     
@@ -261,7 +273,7 @@
             tool.drawingView = self;
             return tool;
         }
-
+            
         case ACEDrawingToolTypeRectagleStroke:
         {
             ACEDrawingRectangleTool *tool = ACE_AUTORELEASE([ACEDrawingRectangleTool new]);
@@ -324,6 +336,17 @@
     [self setNeedsDisplay];
 }
 
+- (void)deactivate:(NSArray*)tools without:(ACEDrawingRectangleTool*)without
+{
+    for (ACEDrawingRectangleTool* tool in tools) {
+        if (tool != without) {
+            tool.isActive = NO;
+            tool.isGrabbing = NO;
+            tool.isTranslating = NO;
+        }
+    }
+}
+
 #pragma mark - Touch Methods
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -337,23 +360,37 @@
     previousPoint1 = [touch previousLocationInView:self];
     currentPoint = [touch locationInView:self];
     
-    if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
-        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
-        if (tool.isActive == NO) {
-            return;
-        }
+    //    if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
+    BOOL hitTool = NO;
+    for (ACEDrawingRectangleTool* tool in self.pathArray) {
+        //        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
+        //        if (tool.isActive == NO) {
+        //            return;
+        //        }
         if ([tool isNear:currentPoint]) {
             CGPoint nearPoint = [tool nearPoint:currentPoint];
             tool.grabbingPoint = nearPoint;
+            tool.isActive = YES;
             tool.isGrabbing = YES;
+            hitTool = YES;
+            [self deactivate:self.pathArray without:tool];
+            break;
         } else if ([tool isHit:currentPoint]) {
+            tool.isActive = YES;
             tool.isTranslating = YES;
             tool.translatingPoint = currentPoint;
+            hitTool = YES;
+            [self deactivate:self.pathArray without:tool];
+            break;
         }
+        
+    }
+    if (hitTool) {
         [self updateCacheImage:YES];
         [self setNeedsDisplay];
-        return;
     }
+    //        return;
+    //    }
     
     if (self.touchDrawable == NO) {
         return;
@@ -398,8 +435,7 @@
     previousPoint1 = [touch previousLocationInView:self];
     currentPoint = [touch locationInView:self];
     
-    if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
-        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
+    for (ACEDrawingRectangleTool* tool in [self activeTools]) {
         if (tool.isGrabbing) {
             [tool updateGrabbingPoint:currentPoint];
             tool.grabbingPoint = currentPoint;
@@ -418,7 +454,7 @@
     if (self.touchDrawable == NO) {
         return;
     }
-
+    
     if ([self.currentTool isKindOfClass:[ACEDrawingPenTool class]]) {
         CGRect bounds = [(ACEDrawingPenTool*)self.currentTool addPathPreviousPreviousPoint:previousPoint2 withPreviousPoint:previousPoint1 withCurrentPoint:currentPoint];
         
@@ -432,7 +468,7 @@
         
     } else if ([self.currentTool isKindOfClass:[ACEDrawingDraggableTextTool class]]) {
         return;
-    
+        
     } else {
         [self.currentTool moveFromPoint:previousPoint1 toPoint:currentPoint];
         [self setNeedsDisplay];
@@ -445,8 +481,8 @@
     // make sure a point is recorded
     [self touchesMoved:touches withEvent:event];
     
-    if ([self lastTool] != nil && [[self lastTool] isKindOfClass:[ACEDrawingRectangleTool class]]) {
-        ACEDrawingRectangleTool *tool = (ACEDrawingRectangleTool*)[self lastTool];
+    NSArray* activeTools = [self activeTools];
+    for (ACEDrawingRectangleTool* tool in activeTools) {
         if (tool.isGrabbing) {
             tool.isGrabbing = NO;
         } else if (tool.isTranslating) {
@@ -454,6 +490,8 @@
         }
         [self updateCacheImage:YES];
         [self setNeedsDisplay];
+    }
+    if (activeTools.count > 0) {
         return;
     }
     
@@ -614,7 +652,7 @@
                 [self.delegate drawingView:self didChangeUndoState:self.undoStates];
             }
             
-        // undo for a tools sub states
+            // undo for a tools sub states
         } else {
             [self.undoStates removeLastObject];
             if ([self.delegate respondsToSelector:@selector(drawingView:didChangeUndoState:)]) {
@@ -735,7 +773,7 @@
 
 - (void)labelViewDidShowEditingHandles:(ACEDrawingLabelView *)label
 {
-    self.draggableTextView = label;    
+    self.draggableTextView = label;
 }
 
 - (void)labelViewDidHideEditingHandles:(ACEDrawingLabelView *)label
@@ -781,20 +819,22 @@
 
 - (BOOL)isGrabbing
 {
-    id<ACEDrawingTool> lastTool = [self lastTool];
-    if ([lastTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
-        return lastTool.isGrabbing;
+    for (ACEDrawingRectangleTool* tool in self.pathArray) {
+        if ([tool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+            return tool.isGrabbing;
+        }
     }
     return NO;
 }
 
 - (BOOL)isTranslating
 {
-    id<ACEDrawingTool> lastTool = [self lastTool];
-    if ([lastTool isKindOfClass:[ACEDrawingRectangleTool class]]) {
-        return [(ACEDrawingRectangleTool*)lastTool isTranslating];
+    for (ACEDrawingRectangleTool* tool in self.pathArray) {
+        if ([tool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+            return [tool isTranslating];
+        }
     }
-    return NO;
+    return YES;
 }
 
 - (void)confirm
@@ -808,4 +848,16 @@
     }
 }
 
+- (void)deleteActiveTool
+{
+    for (ACEDrawingRectangleTool* tool in [self activeTools]) {
+        if ([tool isKindOfClass:[ACEDrawingRectangleTool class]]) {
+            [self.pathArray removeObject:tool];
+        }
+    }
+    [self updateCacheImage:YES];
+    [self setNeedsDisplay];
+}
+
 @end
+

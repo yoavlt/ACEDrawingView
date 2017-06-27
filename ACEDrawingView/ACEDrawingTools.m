@@ -83,7 +83,7 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-	CGContextAddPath(context, path);
+    CGContextAddPath(context, path);
     CGContextSetLineCap(context, kCGLineCapRound);
     CGContextSetLineWidth(context, self.lineWidth);
     CGContextSetStrokeColorWithColor(context, self.lineColor.CGColor);
@@ -101,9 +101,9 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 {
     CGPathRelease(path);
     self.lineColor = nil;
-    #if !ACE_HAS_ARC
+#if !ACE_HAS_ARC
     [super dealloc];
-    #endif
+#endif
 }
 
 @end
@@ -117,8 +117,8 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSaveGState(context);
-
-	CGContextAddPath(context, path);
+    
+    CGContextAddPath(context, path);
     CGContextSetLineCap(context, kCGLineCapRound);
     CGContextSetLineWidth(context, self.lineWidth);
     CGContextSetBlendMode(context, kCGBlendModeClear);
@@ -233,7 +233,7 @@ CGPoint midPoint(CGPoint p1, CGPoint p2)
 }
 
 - (void)applyToolState:(ACEDrawingToolState *)state
-{    
+{
     if (state.hasPositionObject) {
         [self applyTransform:state.positionObject];
     }
